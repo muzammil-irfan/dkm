@@ -1,7 +1,8 @@
 import { Router } from 'express';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-
+// const secret = proces.env.JWT_SECRET;
+const secret = 'nodejs';
 const router = Router();
 
 router.post('/signup', async (req,res)=>{
@@ -30,7 +31,7 @@ router.post('/login',(req,res)=>{
             console.log(result[0].password)
             const match = await bcrypt.compare(req.body.password,result[0].password);
             if(match){
-                jwt.sign(JSON.stringify(result[0]),process.env.JWT_SECRET,(err,token)=>{
+                jwt.sign(JSON.stringify(result[0]),secret,(err,token)=>{
                     if(err) throw err;
                     res.status(200).json({token,message:"Login successfully"});
                 })
