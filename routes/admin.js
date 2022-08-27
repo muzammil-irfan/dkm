@@ -1,4 +1,4 @@
-import { Router } from "express";
+import e, { Router } from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import db from "../libs/db.js";
@@ -7,20 +7,44 @@ const secret = "nodejs";
 const router = Router();
 
 router.post("/signup", async (req, res) => {
-  let sql = "INSERT INTO admin SET ?";
-  // console.log(req.body.password)
-  const password = bcrypt.hashSync(req.body.password, 10);
-  const obj = {
-    name: req.body.name,
-    email: req.body.email,
-    password: password,
-  };
-  db.query(sql, obj, (err) => {
-    if (err) {
-      res.status(400).json({ message: err.message });
+  try {
+    if (
+      req.body.name === undefined ||
+      req.body.email === undefined ||
+      req.body.password === undefined
+    ) {
+      res.status(400).json({ message: "credentials not found" });
+    } else {
+      let emailSql = `SELECT email FROM admin WHERE email='${req.body.email}'`;
+      db.query(emailSql, (err, emailResult) => {
+        if (err) {
+          res.status(500).json({ message: err.message });
+        } else {
+          //if greater then it has found an email in database
+          if (emailResult.length > 0) {
+            res.status(401).json({ message: "Email already exist" });
+          } else {
+            let sql = "INSERT INTO admin SET ?";
+            const password = bcrypt.hashSync(req.body.password, 10);
+            const obj = {
+              name: req.body.name,
+              email: req.body.email,
+              password: password,
+            };
+            db.query(sql, obj, (err) => {
+              if (err) {
+                res.status(400).json({ message: err.message });
+              } else {
+                res.status(200).json({ message: "Admin created successfully" });
+              }
+            });
+          }
+        }
+      });
     }
-    res.status(200).json({ message: "Admin created successfully" });
-  });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
 });
 
 router.post("/login", (req, res) => {
@@ -37,14 +61,17 @@ router.post("/login", (req, res) => {
         );
         if (match) {
           jwt.sign(JSON.stringify(result[0]), secret, (err, token) => {
-            if (err) throw err;
-            res.status(200).json({ token, message: "Login successfully" });
+            if (err) {
+              res.status(500).json({ message: err.message });
+            } else {
+              res.status(200).json({ token, message: "Login successfully" });
+            }
           });
         } else {
           res.status(401).json({ message: "Wrong credentials" });
         }
       } else {
-        res.status(401).json({message:'email not found'})
+        res.status(401).json({ message: "email not found" });
       }
     }
   });
