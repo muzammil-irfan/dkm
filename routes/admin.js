@@ -7,7 +7,7 @@ const router = Router();
 
 router.post('/signup', async (req,res)=>{
     let sql = 'INSERT INTO admin SET ?';
-    console.log(req.body.password)
+    // console.log(req.body.password)
     const password = bcrypt.hashSync(req.body.password,10);
     const obj = {
         name:req.body.name,
