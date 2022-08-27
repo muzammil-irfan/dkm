@@ -13,7 +13,7 @@ router.post("/signup", async (req, res) => {
       req.body.email === undefined ||
       req.body.password === undefined
     ) {
-      res.status(400).json({ message: "credentials not found" });
+      res.status(404).json({ message: "credentials not found" });
     } else {
       let emailSql = `SELECT email FROM admin WHERE email='${req.body.email}'`;
       db.query(emailSql, (err, emailResult) => {
@@ -35,7 +35,7 @@ router.post("/signup", async (req, res) => {
               if (err) {
                 res.status(400).json({ message: err.message });
               } else {
-                res.status(200).json({ message: "Admin created successfully" });
+                res.status(201).json({ message: "Admin created successfully" });
               }
             });
           }
@@ -48,33 +48,45 @@ router.post("/signup", async (req, res) => {
 });
 
 router.post("/login", (req, res) => {
-  let sql = `SELECT * FROM admin WHERE email = '${req.body.email}'`;
-  db.query(sql, async (err, result) => {
-    if (err) {
-      res.status(401).json({ message: "Wrong credentials" });
+  try {
+    if (
+      req.body.email === undefined ||
+      req.body.password === undefined
+    ) {
+      res.status(404).json({ message: "credentials not found" });
     } else {
-      if (result.length > 0) {
-        console.log(result.length);
-        const match = await bcrypt.compare(
-          req.body.password,
-          result[0].password
-        );
-        if (match) {
-          jwt.sign(JSON.stringify(result[0]), secret, (err, token) => {
-            if (err) {
-              res.status(500).json({ message: err.message });
-            } else {
-              res.status(200).json({ token, message: "Login successfully" });
-            }
-          });
-        } else {
+      let sql = `SELECT * FROM admin WHERE email = '${req.body.email}'`;
+      db.query(sql, async (err, result) => {
+        if (err) {
           res.status(401).json({ message: "Wrong credentials" });
+        } else {
+          if (result.length > 0) {
+            const match = await bcrypt.compare(
+              req.body.password,
+              result[0].password
+            );
+            if (match) {
+              jwt.sign(JSON.stringify(result[0]), secret, (err, token) => {
+                if (err) {
+                  res.status(500).json({ message: err.message });
+                } else {
+                  res
+                    .status(202)
+                    .json({ token, message: "Login successfully" });
+                }
+              });
+            } else {
+              res.status(401).json({ message: "Wrong credentials" });
+            }
+          } else {
+            res.status(404).json({ message: "email not found" });
+          }
         }
-      } else {
-        res.status(401).json({ message: "email not found" });
-      }
+      });
     }
-  });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
 });
 
 export default router;
