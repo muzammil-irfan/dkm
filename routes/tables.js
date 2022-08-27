@@ -1,5 +1,5 @@
 import express from 'express';
-
+import db from '../libs/db'
 const router = express.Router();
 
 router.get('/admin',(req,res)=>{
