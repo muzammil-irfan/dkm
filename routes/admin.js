@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import db from '../libs/db'
+import db from '../libs/db.js'
 // const secret = proces.env.JWT_SECRET;
 const secret = 'nodejs';
 const router = Router();
