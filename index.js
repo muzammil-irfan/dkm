@@ -4,10 +4,11 @@ import 'dotenv/config';
 import './libs/db.js';
 import tables from './routes/tables.js';
 import admin from './routes/admin.js';
-import bodyParser from 'body-parser'
+import bodyParser from 'body-parser';
+import cool from 'cool-ascii-faces'
 //Here is the app to create server and api
 const app = express();
-const port = 3000;
+const PORT = process.env.PORT || 3000;
 
 //To connect sql database 
 // db.connect((err)=>{
@@ -27,6 +28,8 @@ app.get('/', (req, res) => {
   res.send('Hello World!')
 });
 // db.end();
-app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`);
+app.get('/cool',(req,res)=>res.send(cool()))
+
+app.listen(PORT, () => {
+  console.log(`Example app listening on port ${PORT}`);
 });
