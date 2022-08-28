@@ -215,7 +215,7 @@ router.post('/updatepin',(req,res)=>{
             if (emailResult.length > 0) {
               const match = emailResult[0].pin === req.body.oldPin;
               if (match) {
-                const updateSql = `UPDATE admin SET password='${req.body.newPin}' WHERE email = '${req.body.email}'`;
+                const updateSql = `UPDATE admin SET pin='${req.body.newPin}' WHERE email = '${req.body.email}'`;
                 db.query(updateSql, (updateErr, updateResult) => {
                   if (updateErr) {
                     res.status(501).json({
