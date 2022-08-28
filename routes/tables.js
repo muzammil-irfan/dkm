@@ -17,6 +17,16 @@ router.get('/admin',(req,res)=>{
         res.status(201).json({message:'Table created successfully'});
     });
 });
+router.get('/updateadmin',(req,res)=>{
+    let sql = `ALTER TABLE admin ADD code CHAR(50) DEFAULT(NULL)`;
+    db.query(sql,(err)=>{
+        if(err){
+            res.status(400).json({message:err.message});
+        }else {
+            res.status(201).json({message:'Table created successfully'});
+        }
+    });
+});
 
 
 export default router;
