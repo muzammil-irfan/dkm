@@ -24,32 +24,36 @@ router.post("/signup", async (req, res) => {
     ) {
       res.status(404).json({ message: "credentials not found" });
     } else {
-      let emailSql = `SELECT email FROM admin WHERE email='${req.body.email}'`;
-      db.query(emailSql, (err, emailResult) => {
-        if (err) {
-          res.status(500).json({ message: err.message });
-        } else {
-          //if greater then it has found an email in database
-          if (emailResult.length > 0) {
-            res.status(401).json({ message: "Email already exist" });
+      if(req.body.password.length < 6){
+        res.status(400).json({message:"Password cannot be less than 6"});
+      } else {
+        let emailSql = `SELECT email FROM admin WHERE email='${req.body.email}'`;
+        db.query(emailSql, (err, emailResult) => {
+          if (err) {
+            res.status(500).json({ message: err.message });
           } else {
-            let sql = "INSERT INTO admin SET ?";
-            const password = bcrypt.hashSync(req.body.password, 10);
-            const obj = {
-              name: req.body.name,
-              email: req.body.email,
-              password: password,
-            };
-            db.query(sql, obj, (err) => {
-              if (err) {
-                res.status(400).json({ message: err.message });
-              } else {
-                res.status(201).json({ message: "Admin created successfully" });
-              }
-            });
+            //if greater then it has found an email in database
+            if (emailResult.length > 0) {
+              res.status(401).json({ message: "Email already exist" });
+            } else {
+              let sql = "INSERT INTO admin SET ?";
+              const password = bcrypt.hashSync(req.body.password, 10);
+              const obj = {
+                name: req.body.name,
+                email: req.body.email,
+                password: password,
+              };
+              db.query(sql, obj, (err) => {
+                if (err) {
+                  res.status(400).json({ message: err.message });
+                } else {
+                  res.status(201).json({ message: "Admin created successfully" });
+                }
+              });
+            }
           }
-        }
-      });
+        });
+      }
     }
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -61,9 +65,7 @@ router.post("/login", (req, res) => {
     if (req.body.email === undefined || req.body.password === undefined) {
       res.status(404).json({ message: "credentials not found" });
     } else {
-      if(req.body.password.length < 6){
-        res.status(400).json({message:"Password cannot be less than 6"});
-      } else {
+      
         let sql = `SELECT * FROM admin WHERE email = '${req.body.email}'`;
         db.query(sql, async (err, result) => {
           if (err) {
@@ -92,7 +94,7 @@ router.post("/login", (req, res) => {
             }
           }
         });
-      }
+      
     }
   } catch (err) {
     res.status(500).json({ message: err.message });
