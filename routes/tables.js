@@ -8,6 +8,7 @@ router.get('/admin',(req,res)=>{
         name VARCHAR(255), 
         email VARCHAR(255) UNIQUE NOT NULL , 
         password VARCHAR(255) NOT NULL, 
+        pin int NOT NULL,
         PRIMARY KEY (id))`;
     db.query(sql,(err)=>{
         if(err){
@@ -18,12 +19,12 @@ router.get('/admin',(req,res)=>{
     });
 });
 router.get('/updateadmin',(req,res)=>{
-    let sql = `ALTER TABLE admin ADD code CHAR(50) DEFAULT(NULL)`;
+    let sql = `DROP TABLE admin`;
     db.query(sql,(err)=>{
         if(err){
             res.status(400).json({message:err.message});
         }else {
-            res.status(201).json({message:'Table created successfully'});
+            res.status(201).json({message:'Table dropped successfully'});
         }
     });
 });
