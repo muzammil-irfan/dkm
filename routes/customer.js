@@ -60,7 +60,11 @@ router.put("/edit/:id", (req, res) => {
         if (err) {
           res.status(400).json({ message: err.message });
         } else {
-          res.status(200).json({ message: "Customer updated successfully" });
+            if(result.affectedRows === 1){
+                res.status(200).json({ message: "Customer updated successfully" });
+            } else {
+                res.status(400).json({message:"Customer not found"});
+            }
         }
       });
     } else {
@@ -78,7 +82,11 @@ router.delete("/delete/:id", (req, res) => {
       if (err) {
         res.status(400).json({ message: err.message });
       } else {
-        res.status(200).json({ message: "Customer deleted successfully" });
+        if(result.affectedRows === 1){
+            res.status(200).json({ message: "Customer deleted successfully" });
+        } else {
+            res.status(400).json({message:"Customer not found"});
+        }
       }
     });
   } catch (error) {
