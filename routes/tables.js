@@ -43,4 +43,18 @@ router.get("/customer", (req, res) => {
   });
 });
 
+router.get("/location",(req,res)=>{
+  const sql = `CREATE TABLE 
+  location(id int AUTO_INCREMENT,
+  name TEXT NOT NULL,
+  PRIMARY KEY (id))`;
+  db.query(sql, (err) => {
+    if (err) {
+      res.status(400).json({ message: err.message });
+    } else {
+      res.status(201).json({ message: "Table created successfully" });
+    }
+  });
+})
+
 export default router;
