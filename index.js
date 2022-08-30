@@ -6,6 +6,7 @@ import tables from './routes/tables.js';
 import admin from './routes/admin.js';
 import customer from './routes/customer.js';
 import location from './routes/location.js';
+import user from './routes/user.js';
 import bodyParser from 'body-parser';
 import cool from 'cool-ascii-faces'
 //Here is the app to create server and api
@@ -27,6 +28,7 @@ app.use('/table',tables);
 app.use('/admin',admin);
 app.use('/customer',customer);
 app.use('/location',location);
+app.use('/user',user);
 
 app.get('/', (req, res) => {
   res.send('Hello World!')
