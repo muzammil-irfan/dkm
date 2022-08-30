@@ -5,7 +5,7 @@ import db from "../libs/db.js";
 // const secret = proces.env.JWT_SECRET;
 const secret = "nodejs";
 const router = Router();
-
+const statusKeys = ['pending','approved','rejected'];
 
 router.get("/", (req, res) => {
   let sql = "SELECT * FROM user";
@@ -88,8 +88,12 @@ router.post("/login", (req, res) => {
             res.status(401).json({ message: "Wrong credentials" });
           } else {
             if (result.length > 0) {
-              if (result[0].status !== 'approved') {
-                res.status(401).json({ message: "you are not approved yet" });
+              if (result[0].status !== statusKeys[1]) {
+                if(result[0].status === statusKeys[0]) {
+                    res.status(401).json({ message: "you are not approved yet" });
+                } else {
+                    res.status(401).json({ message: "Rejected" });
+                }
               } else {
                 const match = await bcrypt.compare(
                   req.body.password.toString(),
@@ -176,7 +180,7 @@ router.post("/updatepassword", (req, res) => {
   }
 });
 
-const statusKeys = ['pending','approved','rejected'];
+
 router.put("/edit/:id", (req, res) => {
     try {
         
