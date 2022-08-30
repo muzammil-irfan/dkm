@@ -27,7 +27,7 @@ router.post("/signup", async (req, res) => {
       res.status(404).json({ message: "credentials not found" });
     } else {
       if ( req.body.password.length < 6 || !req.body.email.includes('@') || !req.body.email.includes('.') ) {
-        if (!req.body.email.includes('@') && !req.body.email.includes('.')) {
+        if (!req.body.email.includes('@') || !req.body.email.includes('.')) {
           res.status(400).json({ message: "Email format is not correct" });
         } else {
           res.status(400).json({ message: "Password cannot be less than 6" });
@@ -181,7 +181,7 @@ router.put("/edit/:id", (req, res) => {
     try {
         
       if (req.body.name !== undefined || req.body.email !== undefined || req.body.password !== undefined || req.body.status !== undefined ) {
-        const sql = `UPDATE location SET ? WHERE id='${req.params.id}'`;
+        const sql = `UPDATE user SET ? WHERE id='${req.params.id}'`;
         const obj = {};
         if(req.body.name !== undefined){
             obj['name'] = req.body.name;
