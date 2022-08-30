@@ -193,9 +193,6 @@ router.put("/edit/:id", (req, res) => {
         if(req.body.email !== undefined){
             obj['email'] = req.body.email;
         }
-        if(req.body.password !== undefined){
-            obj['password'] = req.body.password;
-        }
         let allowed = true;
         
         if(req.body.status !== undefined){
