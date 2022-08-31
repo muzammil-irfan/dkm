@@ -18,16 +18,16 @@ router.get("/admin", (req, res) => {
     res.status(201).json({ message: "Table created successfully" });
   });
 });
-router.get('/updateuser',(req,res)=>{
-    let sql = `DROP TABLE user`;
-    db.query(sql,(err)=>{
-        if(err){
-            res.status(400).json({message:err.message});
-        }else {
-            res.status(201).json({message:'Table dropped successfully'});
-        }
-    });
-});
+// router.get('/updateuser',(req,res)=>{
+//     let sql = `DROP TABLE user`;
+//     db.query(sql,(err)=>{
+//         if(err){
+//             res.status(400).json({message:err.message});
+//         }else {
+//             res.status(201).json({message:'Table dropped successfully'});
+//         }
+//     });
+// });
 router.get("/customer", (req, res) => {
   let sql = `CREATE TABLE 
     customer(id int AUTO_INCREMENT, 
