@@ -46,7 +46,7 @@ router.post("/signup", async (req, res) => {
               let sql = "INSERT INTO user SET ?";
               const password = bcrypt.hashSync(req.body.password, 10);
               const obj = {
-                id:randomstring.generate(24),
+                id:randomstring.generate(24).toLowerCase(),
                 name: req.body.name,
                 email: req.body.email,
                 password: password
