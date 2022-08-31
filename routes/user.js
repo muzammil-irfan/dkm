@@ -3,6 +3,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import db from "../libs/db.js";
 // const secret = proces.env.JWT_SECRET;
+import randomstring from 'randomstring';
 const secret = "nodejs";
 const router = Router();
 const statusKeys = ['pending','approved','rejected'];
@@ -45,6 +46,7 @@ router.post("/signup", async (req, res) => {
               let sql = "INSERT INTO user SET ?";
               const password = bcrypt.hashSync(req.body.password, 10);
               const obj = {
+                id:randomstring.generate(24),
                 name: req.body.name,
                 email: req.body.email,
                 password: password

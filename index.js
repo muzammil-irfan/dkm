@@ -11,7 +11,7 @@ import bodyParser from 'body-parser';
 import cool from 'cool-ascii-faces'
 //Here is the app to create server and api
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3001;
 
 //To connect sql database 
 // db.connect((err)=>{
