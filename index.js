@@ -1,7 +1,7 @@
 import express from 'express';
 //It will led app to process env variables
-import * as dotenv from 'dotenv';
-dotenv.config();
+import 'dotenv/config';
+// dotenv.config();
 import './libs/db.js';
 import tables from './routes/tables.js';
 import admin from './routes/admin.js';
