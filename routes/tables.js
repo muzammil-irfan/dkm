@@ -73,5 +73,39 @@ router.get("/user",(req,res)=>{
     res.status(201).json({ message: "Table created successfully" });
   });
 });
+router.get("/ticket",(req,res)=>{
+  const sql = `CREATE TABLE 
+        ticket(id int AUTO_INCREMENT, 
+        shipped_to VARCHAR(255) NOT NULL, 
+        date DATE NOT NULL, 
+        location VARCHAR(255) NOT NULL, 
+        customer_po VARCHAR(255) NOT NULL , 
+        pipe_size VARCHAR(255) NOT NULL, 
+        wall VARCHAR(255) NOT NULL,
+        weight VARCHAR(255) NOT NULL,
+        end_finish VARCHAR(255) NOT NULL,
+        ranges VARCHAR(255) NOT NULL,
+        conditions VARCHAR(255) NOT NULL,
+        pcs_ft VARCHAR(255) NOT NULL,
+        pcs_in VARCHAR(255) NOT NULL,
+        pcs_notes VARCHAR(255) ,
+        recap VARCHAR(255) NOT NULL,
+        total VARCHAR(255) NOT NULL,
+        driver_signature_pad VARCHAR(255) NOT NULL,
+        truck_number int NOT NULL,
+        truck_company VARCHAR(255) NOT NULL,
+        trailer_number int NOT NULL,
+        truck_image VARCHAR(255),
+        trailer_image VARCHAR(255) NOT NULL,
+        terms_and_condition VARCHAR(255) NOT NULL,
+        PRIMARY KEY (id))`;
+  db.query(sql, (err) => {
+    if (err) {
+      res.status(400).json({ message: err.message });
+      return;
+    }
+    res.status(201).json({ message: "Table created successfully" });
+  });
+});
 
 export default router;

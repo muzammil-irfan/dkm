@@ -8,7 +8,7 @@ import mysql from 'mysql2';
 // });
 // const database_url = process.env.DATABASE_URL;
 const database_url = 'mysql://0i07t5o1eyg1yfseb81f:pscale_pw_M2PYnKTnxL1ddCYFBo7J6abn1HNFiffGRM2Rt2jsIof@us-east.connect.psdb.cloud/nodejs?ssl={"rejectUnauthorized":true}';
-const db = mysql.createConnection(database_url);
+// const db = mysql.createConnection(database_url);
 console.log('Pscale connected....');
-
+const db = ''
 export default db;

@@ -1,17 +1,19 @@
 import express from 'express';
 //It will led app to process env variables
-import 'dotenv/config';
+import * as dotenv from 'dotenv';
+dotenv.config();
 import './libs/db.js';
 import tables from './routes/tables.js';
 import admin from './routes/admin.js';
 import customer from './routes/customer.js';
 import location from './routes/location.js';
 import user from './routes/user.js';
+import ticket from './routes/ticket.js';
 import bodyParser from 'body-parser';
-import cool from 'cool-ascii-faces'
+import cool from 'cool-ascii-faces';
 //Here is the app to create server and api
 const app = express();
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3000;
 
 //To connect sql database 
 // db.connect((err)=>{
@@ -29,6 +31,7 @@ app.use('/admin',admin);
 app.use('/customer',customer);
 app.use('/location',location);
 app.use('/user',user);
+app.use('/ticket',ticket);
 
 app.get('/', (req, res) => {
   res.send('Hello World!')
