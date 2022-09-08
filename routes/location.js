@@ -11,7 +11,13 @@ router.get("/", (req, res) => {
       if (err) {
         res.status(400).json({ message: err.message });
       } else {
-        res.status(200).json(result);
+        const resultData = result.map(item=>{
+          return{
+            id:item.location_id,
+            name:item.location_name
+          }
+        })
+        res.status(200).json(resultData);
       }
     });
   } catch (error) {
@@ -25,7 +31,7 @@ router.post("/add", (req, res) => {
       res.status(404).json({ message: "credentials not found" });
     } else {
       const obj = {
-        name: req.body.name
+        location_name: req.body.name
       };
       const sql = "INSERT INTO location SET ?";
       db.query(sql, obj, (err, result) => {
@@ -44,9 +50,9 @@ router.post("/add", (req, res) => {
 router.put("/edit/:id", (req, res) => {
   try {
     if (req.body.name !== undefined) {
-      const sql = `UPDATE location SET ? WHERE id='${req.params.id}'`;
+      const sql = `UPDATE location SET ? WHERE location_id='${req.params.id}'`;
       const obj = {
-        name:req.body.name
+        location_name:req.body.name
       };
       db.query(sql, obj, (err, result) => {
         if (err) {
@@ -69,7 +75,7 @@ router.put("/edit/:id", (req, res) => {
 
 router.delete("/delete/:id", (req, res) => {
   try {
-    const sql = `DELETE FROM location WHERE id='${req.params.id}'`;
+    const sql = `DELETE FROM location WHERE location_id='${req.params.id}'`;
     db.query(sql, (err, result) => {
       if (err) {
         res.status(400).json({ message: err.message });

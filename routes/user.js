@@ -18,6 +18,21 @@ router.get("/", (req, res) => {
     }
   });
 });
+
+router.get('/status',(req,res)=>{
+  res.status(200).json(statusKeys);
+})
+router.get("/:id", (req, res) => {
+  let sql = `SELECT user_id,name,email,status FROM user WHERE user_id='${req.params.id}'`;
+  db.query(sql, (err, result) => {
+    if (err) {
+      res.status(400).json({ message: err.message });
+    } else {
+      res.json(result);
+    }
+  });
+});
+
 router.post("/signup", async (req, res) => {
   try {
     if (
@@ -46,7 +61,7 @@ router.post("/signup", async (req, res) => {
               let sql = "INSERT INTO user SET ?";
               const password = bcrypt.hashSync(req.body.password, 10);
               const obj = {
-                id:randomstring.generate(24).toLowerCase(),
+                user_id:randomstring.generate(24).toLowerCase(),
                 name: req.body.name,
                 email: req.body.email,
                 password: password
@@ -187,7 +202,7 @@ router.put("/edit/:id", (req, res) => {
     try {
         
       if (req.body.name !== undefined || req.body.email !== undefined || req.body.password !== undefined || req.body.status !== undefined ) {
-        const sql = `UPDATE user SET ? WHERE id='${req.params.id}'`;
+        const sql = `UPDATE user SET ? WHERE user_id='${req.params.id}'`;
         const obj = {};
         if(req.body.name !== undefined){
             obj['name'] = req.body.name;
@@ -237,7 +252,5 @@ router.put("/edit/:id", (req, res) => {
     }
 });
 
-router.get('/status',(req,res)=>{
-    res.status(200).json(statusKeys);
-})
+
 export default router;

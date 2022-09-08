@@ -13,7 +13,14 @@ router.get("/", (req, res) => {
       if (err) {
         res.status(400).json({ message: err.message });
       } else {
-        res.status(200).json(result);
+        const resultData = result.map(item=>{
+          return {
+            id:item.customer_id,
+            name:item.customer_name,
+            address:item.customer_address
+          }
+        })
+        res.status(200).json(resultData);
       }
     });
   } catch (error) {
@@ -27,8 +34,8 @@ router.post("/add", (req, res) => {
       res.status(404).json({ message: "credentials not found" });
     } else {
       const obj = {
-        name: req.body.name,
-        address: req.body.address,
+        customer_name: req.body.name,
+        customer_address: req.body.address,
       };
       const sql = "INSERT INTO customer SET ?";
       db.query(sql, obj, (err, result) => {
@@ -48,13 +55,13 @@ router.put("/edit/:id", (req, res) => {
   try {
     if (req.body.name !== undefined || req.body.address !== undefined) {
       // const emailSql = `SELECT `
-      const sql = `UPDATE customer SET ? WHERE id='${req.params.id}'`;
+      const sql = `UPDATE customer SET ? WHERE customer_id='${req.params.id}'`;
       const obj = {};
       if (req.body.name !== undefined) {
-        obj["name"] = req.body.name;
+        obj["customer_name"] = req.body.name;
       }
       if (req.body.address !== undefined) {
-        obj["address"] = req.body.address;
+        obj["customer_address"] = req.body.address;
       }
       db.query(sql, obj, (err, result) => {
         if (err) {
@@ -77,7 +84,7 @@ router.put("/edit/:id", (req, res) => {
 
 router.delete("/delete/:id", (req, res) => {
   try {
-    const sql = `DELETE FROM customer WHERE id='${req.params.id}'`;
+    const sql = `DELETE FROM customer WHERE customer_id='${req.params.id}'`;
     db.query(sql, (err, result) => {
       if (err) {
         res.status(400).json({ message: err.message });
