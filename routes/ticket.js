@@ -39,11 +39,81 @@ router.get("/", (req, res) => {
             return `https://${bucketName}.s3.amazonaws.com/${key}`;
           }
           let resultData = result.map((item) => {
-              console.log(item)
               const truck_image_url = urlCreator(item.truck_image);
               const trailer_image_url = urlCreator(item.trailer_image);
               const driver_signature_url = urlCreator(item.driver_signature);
               return {
+                ticket_id:item.ticket_id,
+                user:{
+                  id:item.user_id,
+                  name:item.name,
+                  email:item.email,
+                  status:item.status
+                },
+                shipped_to:item.shipped_to,
+                customer:{
+                  id:item.customer_id,
+                  name:item.customer_name,
+                  address:item.customer_address
+                },
+                address:item.address,
+                dkm_number:item.dkm_number,
+                data:item.date,
+                location:{
+                  id:item.location_id,
+                  name:item.location_name
+                },
+                customer_po:item.customer_po,
+                pipe_size:item.pipe_size,
+                wall:item.wall,
+                weight_ft:item.weight_ft,
+                end_finish:item.end_finish,
+                ranges:item.ranges,
+                conditions:item.conditions,
+                ticket_number:item.ticket_number,
+                total_ft:item.total_ft,
+                pcs:{
+                  id:item.pcs_id,
+                  ft:item.pcs_ft,
+                  in:item.pcs_in,
+                  notes:item.pcs_notes
+                },
+                truck_number:item.truck_number,
+                truck_company:item.truck_company,
+                trailer_number:item.trailer_number,
+                driver_signature:driver_signature_url,
+                truck_image:truck_image_url,
+                trailer_image:trailer_image_url
+              };
+            })
+          res.status(200).json(resultData);
+        } else {
+          res.status(200).json(result);
+        }
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+router.get(`/user/:id`, (req, res) => {
+  try {
+    const sql = `SELECT * FROM ticket INNER JOIN user ON ticket.user=user.user_id INNER JOIN location ON ticket.location=location.location_id INNER JOIN customer ON ticket.customer=customer.customer_id RIGHT JOIN pcs ON ticket.pcs=pcs.pcs_id  WHERE user='${req.params.id}'`;
+    db.query(sql, async (err, result) => {
+      if (err) {
+        res.status(400).json({ message: err.message });
+      } else {
+        if (result.length > 0) {
+          const urlCreator = (key)=>{
+            return `https://${bucketName}.s3.amazonaws.com/${key}`;
+          }
+          let resultData = result.map((item) => {
+              const truck_image_url = urlCreator(item.truck_image);
+              const trailer_image_url = urlCreator(item.trailer_image);
+              const driver_signature_url = urlCreator(item.driver_signature);
+              return {
+                ticket_id:item.ticket_id,                
                 user:{
                   id:item.user_id,
                   name:item.name,
@@ -135,7 +205,7 @@ router.post(
         ranges: req.body.ranges,
         conditions: req.body.conditions,
         total_ft: req.body.total_ft,
-        // pcs: req.body.pcs,
+        ticket_number:req.body.ticket_number,
         truck_number: req.body.truck_number,
         truck_company: req.body.truck_company,
         trailer_number: req.body.trailer_number,

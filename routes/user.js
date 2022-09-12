@@ -19,6 +19,33 @@ router.get("/", (req, res) => {
   });
 });
 
+router.get("/ticket", (req, res) => {
+  let userSql = "SELECT * FROM user";
+  db.query(userSql, (err, userResult) => {
+    if (err) {
+      res.status(400).json({ message: err.message });
+    } else {
+      const ticketSql='SELECT user FROM ticket';
+      db.query(ticketSql,(err,ticketResult)=>{
+        if (err) {
+          res.status(400).json({ message: err.message });
+        } else {
+          userResult.map(item=>{
+            item['ticket']= 0;
+            ticketResult.map(ticketItem=>{
+              if(ticketItem.user === item.user_id){
+                item['ticket'] += 1;
+              }
+            })
+          })
+          res.json(userResult);
+        }
+      })
+      
+    }
+  });
+});
+
 router.get('/status',(req,res)=>{
   res.status(200).json(statusKeys);
 })

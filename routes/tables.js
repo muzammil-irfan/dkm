@@ -131,4 +131,18 @@ router.get("/ticket",(req,res)=>{
   });
 });
 
+router.get("/dkm_ticket",(req,res)=>{
+  const sql =  `CREATE TABLE 
+                dkm_ticket(id int AUTO_INCREMENT, 
+                dkm int,
+                ticket int,
+                PRIMARY KEY (id))`
+  db.query(sql, (err) => {
+    if (err) {
+      res.status(400).json({ message: err.message });
+    } else {
+      res.status(201).json({ message: "Table created successfully" });
+    }
+  });
+})
 export default router;
