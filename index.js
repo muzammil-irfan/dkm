@@ -1,7 +1,6 @@
 import express from 'express';
 //It will led app to process env variables
 import 'dotenv/config';
-// import db, { connector } from './libs/db.js';
 import tables from './routes/tables.js';
 import admin from './routes/admin.js';
 import customer from './routes/customer.js';
@@ -14,13 +13,9 @@ import bodyParser from 'body-parser';
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// To connect sql database 
-// connector();
-
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.json());
 app.use((req, res, next) => {
-  // connector();
   next()
 })
 app.use('/table',tables);
