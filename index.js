@@ -7,8 +7,12 @@ import customer from './routes/customer.js';
 import location from './routes/location.js';
 import user from './routes/user.js';
 import ticket from './routes/ticket.js';
+import total_ft from './routes/total_ft.js';
+import customer_order from './routes/customer_order.js';
+import forget_password from './routes/forget_password.js';
 import dkm_ticket from './routes/dkm_ticket.js';
 import bodyParser from 'body-parser';
+
 //Here is the app to create server and api
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -23,8 +27,11 @@ app.use('/admin',admin);
 app.use('/customer',customer);
 app.use('/location',location);
 app.use('/user',user);
+app.use('/user',forget_password);
 app.use('/ticket',ticket);
 app.use('/dkm_ticket',dkm_ticket);
+app.use('/total_ft',total_ft);
+app.use('/customer_order',customer_order);
 
 app.get('/', (req, res) => {
   res.send('Hello World!')

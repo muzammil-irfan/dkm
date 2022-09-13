@@ -29,7 +29,7 @@ const upload = multer({
 
 router.get("/", (req, res) => {
   try {
-    const sql = "SELECT * FROM ticket INNER JOIN user ON ticket.user=user.user_id INNER JOIN location ON ticket.location=location.location_id INNER JOIN customer ON ticket.customer=customer.customer_id RIGHT JOIN pcs ON ticket.pcs=pcs.pcs_id";
+    const sql = "SELECT * FROM ticket LEFT JOIN user ON ticket.user=user.user_id LEFT JOIN location ON ticket.location=location.location_id LEFT JOIN customer ON ticket.customer=customer.customer_id LEFT JOIN pcs ON ticket.pcs=pcs.pcs_id";
     db.query(sql, async (err, result) => {
       if (err) {
         res.status(400).json({ message: err.message });
@@ -99,7 +99,7 @@ router.get("/", (req, res) => {
 
 router.get(`/user/:id`, (req, res) => {
   try {
-    const sql = `SELECT * FROM ticket INNER JOIN user ON ticket.user=user.user_id INNER JOIN location ON ticket.location=location.location_id INNER JOIN customer ON ticket.customer=customer.customer_id RIGHT JOIN pcs ON ticket.pcs=pcs.pcs_id  WHERE user='${req.params.id}'`;
+    const sql = `SELECT * FROM ticket LEFT JOIN user ON ticket.user=user.user_id LEFT JOIN location ON ticket.location=location.location_id LEFT JOIN customer ON ticket.customer=customer.customer_id LEFT JOIN pcs ON ticket.pcs=pcs.pcs_id  WHERE user='${req.params.id}'`;
     db.query(sql, async (err, result) => {
       if (err) {
         res.status(400).json({ message: err.message });
