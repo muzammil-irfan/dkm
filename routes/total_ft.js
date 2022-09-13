@@ -7,7 +7,7 @@ const router = Router();
 router.get("/", (req, res) => {
   try {
     const sql =
-      "SELECT location,total_ft FROM ticket LEFT JOIN location ON ticket.location=location.location_id";
+      "SELECT location,location_name,total_ft FROM ticket LEFT JOIN location ON ticket.location=location.location_id";
     db.query(sql, (err, result) => {
       if (err) {
         res.status(400).json({ message: err.message });
