@@ -2,11 +2,11 @@ import { Router } from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import db from "../libs/db.js";
-// const secret = proces.env.JWT_SECRET;
-import randomstring from 'randomstring';
-const secret = "nodejs";
+const secret = process.env.JWT_SECRET;
+import randomstring from "randomstring";
+// const secret = "nodejs";
 const router = Router();
-const statusKeys = ['pending','approved','rejected'];
+const statusKeys = ["pending", "approved", "rejected"];
 
 router.get("/", (req, res) => {
   let sql = "SELECT * FROM user";
@@ -25,30 +25,29 @@ router.get("/ticket", (req, res) => {
     if (err) {
       res.status(400).json({ message: err.message });
     } else {
-      const ticketSql='SELECT user FROM ticket';
-      db.query(ticketSql,(err,ticketResult)=>{
+      const ticketSql = "SELECT user FROM ticket";
+      db.query(ticketSql, (err, ticketResult) => {
         if (err) {
           res.status(400).json({ message: err.message });
         } else {
-          userResult.map(item=>{
-            item['ticket']= 0;
-            ticketResult.map(ticketItem=>{
-              if(ticketItem.user === item.user_id){
-                item['ticket'] += 1;
+          userResult.map((item) => {
+            item["ticket"] = 0;
+            ticketResult.map((ticketItem) => {
+              if (ticketItem.user === item.user_id) {
+                item["ticket"] += 1;
               }
-            })
-          })
+            });
+          });
           res.json(userResult);
         }
-      })
-      
+      });
     }
   });
 });
 
-router.get('/status',(req,res)=>{
+router.get("/status", (req, res) => {
   res.status(200).json(statusKeys);
-})
+});
 router.get("/:id", (req, res) => {
   let sql = `SELECT user_id,name,email,status FROM user WHERE user_id='${req.params.id}'`;
   db.query(sql, (err, result) => {
@@ -65,12 +64,16 @@ router.post("/signup", async (req, res) => {
     if (
       req.body.name === undefined ||
       req.body.email === undefined ||
-      req.body.password === undefined 
+      req.body.password === undefined
     ) {
       res.status(404).json({ message: "credentials not found" });
     } else {
-      if ( req.body.password.length < 6 || !req.body.email.includes('@') || !req.body.email.includes('.') ) {
-        if (!req.body.email.includes('@') || !req.body.email.includes('.')) {
+      if (
+        req.body.password.length < 6 ||
+        !req.body.email.includes("@") ||
+        !req.body.email.includes(".")
+      ) {
+        if (!req.body.email.includes("@") || !req.body.email.includes(".")) {
           res.status(400).json({ message: "Email format is not correct" });
         } else {
           res.status(400).json({ message: "Password cannot be less than 6" });
@@ -88,10 +91,10 @@ router.post("/signup", async (req, res) => {
               let sql = "INSERT INTO user SET ?";
               const password = bcrypt.hashSync(req.body.password, 10);
               const obj = {
-                user_id:randomstring.generate(24).toLowerCase(),
+                user_id: randomstring.generate(24).toLowerCase(),
                 name: req.body.name,
                 email: req.body.email,
-                password: password
+                password: password,
               };
               db.query(sql, obj, (err) => {
                 if (err) {
@@ -114,17 +117,11 @@ router.post("/signup", async (req, res) => {
 
 router.post("/login", (req, res) => {
   try {
-    if (
-      req.body.email === undefined ||
-      req.body.password === undefined 
-    ) {
+    if (req.body.email === undefined || req.body.password === undefined) {
       res.status(404).json({ message: "credentials not found" });
     } else {
-      if (
-        req.body.password.length < 6
-      ) {
-          res.status(400).json({ message: "Password cannot be less than 6" });
-        
+      if (req.body.password.length < 6) {
+        res.status(400).json({ message: "Password cannot be less than 6" });
       } else {
         let sql = `SELECT * FROM user WHERE email = '${req.body.email}'`;
         db.query(sql, async (err, result) => {
@@ -132,19 +129,21 @@ router.post("/login", (req, res) => {
             res.status(401).json({ message: "Wrong credentials" });
           } else {
             if (result.length > 0) {
-              if (result[0].status !== statusKeys[1]) {
-                if(result[0].status === statusKeys[0]) {
-                    res.status(401).json({ message: "you are not approved yet" });
-                } else {
+              const match = await bcrypt.compare(
+                req.body.password.toString(),
+                result[0].password
+              );
+              if (match) {
+                if (result[0].status !== statusKeys[1]) {
+                  if (result[0].status === statusKeys[0]) {
+                    res
+                      .status(401)
+                      .json({ message: "you are not approved yet" });
+                  } else {
                     res.status(401).json({ message: "Rejected" });
-                }
-              } else {
-                const match = await bcrypt.compare(
-                  req.body.password.toString(),
-                  result[0].password
-                );
-                if (match) {
-                  jwt.sign(JSON.stringify(result[0]), secret, (err, token) => {
+                  }
+                } else {
+                  jwt.sign(JSON.stringify(result[0]), secret,{ maxAge: 1}, (err, token) => {
                     if (err) {
                       res.status(500).json({ message: err.message });
                     } else {
@@ -153,9 +152,9 @@ router.post("/login", (req, res) => {
                         .json({ token, message: "Login successfully" });
                     }
                   });
-                } else {
-                  res.status(401).json({ message: "Wrong credentials" });
                 }
+              } else {
+                res.status(401).json({ message: "Wrong credentials" });
               }
             } else {
               res.status(404).json({ message: "email not found" });
@@ -178,8 +177,7 @@ router.post("/updatepassword", (req, res) => {
     ) {
       res.status(404).json({ message: "Credentials not found" });
     } else {
-      if (req.body.newPassword.length < 6 ) {
-        
+      if (req.body.newPassword.length < 6) {
         res.status(400).json({ message: "Password cannot be less than 6" });
       } else {
         let emailSql = `SELECT * FROM user WHERE email = '${req.body.email}'`;
@@ -224,60 +222,61 @@ router.post("/updatepassword", (req, res) => {
   }
 });
 
-
 router.put("/edit/:id", (req, res) => {
-    try {
-        
-      if (req.body.name !== undefined || req.body.email !== undefined || req.body.password !== undefined || req.body.status !== undefined ) {
-        const sql = `UPDATE user SET ? WHERE user_id='${req.params.id}'`;
-        const obj = {};
-        if(req.body.name !== undefined){
-            obj['name'] = req.body.name;
-        }
-        if(req.body.email !== undefined){
-            obj['email'] = req.body.email;
-        }
-        let allowed = true;
-        
-        if(req.body.status !== undefined){
-            switch(req.body.status){
-                case statusKeys[0]:
-                    obj['status'] = statusKeys[0];
-                    break;
-                case statusKeys[1]:
-                    obj['status'] = statusKeys[1];
-                    break;
-                case statusKeys[2]:
-                    obj['status'] = statusKeys[2];
-                    break;
-                default:
-                    allowed = false;
-                    break;
-            }
-        }
-        if(allowed){
-            db.query(sql, obj, (err, result) => {
-                if (err) {
-                  res.status(400).json({ message: err.message });
-                } else {
-                    if(result.affectedRows === 1){
-                        res.status(200).json({ message: "User updated successfully" });
-                    } else {
-                        res.status(400).json({message:"User not found"});
-                    }
-                }
-              });
-        } else {
-            res.status(400).json({message:"Status is not valid"});
-        }
-        
-      } else {
-        res.status(404).json({ message: "Credentials not found" });
+  try {
+    if (
+      req.body.name !== undefined ||
+      req.body.email !== undefined ||
+      req.body.password !== undefined ||
+      req.body.status !== undefined
+    ) {
+      const sql = `UPDATE user SET ? WHERE user_id='${req.params.id}'`;
+      const obj = {};
+      if (req.body.name !== undefined) {
+        obj["name"] = req.body.name;
       }
-    } catch (error) {
-      res.status(500).json({ message: error.message });
-    }
-});
+      if (req.body.email !== undefined) {
+        obj["email"] = req.body.email;
+      }
+      let allowed = true;
 
+      if (req.body.status !== undefined) {
+        switch (req.body.status) {
+          case statusKeys[0]:
+            obj["status"] = statusKeys[0];
+            break;
+          case statusKeys[1]:
+            obj["status"] = statusKeys[1];
+            break;
+          case statusKeys[2]:
+            obj["status"] = statusKeys[2];
+            break;
+          default:
+            allowed = false;
+            break;
+        }
+      }
+      if (allowed) {
+        db.query(sql, obj, (err, result) => {
+          if (err) {
+            res.status(400).json({ message: err.message });
+          } else {
+            if (result.affectedRows === 1) {
+              res.status(200).json({ message: "User updated successfully" });
+            } else {
+              res.status(400).json({ message: "User not found" });
+            }
+          }
+        });
+      } else {
+        res.status(400).json({ message: "Status is not valid" });
+      }
+    } else {
+      res.status(404).json({ message: "Credentials not found" });
+    }
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
 
 export default router;

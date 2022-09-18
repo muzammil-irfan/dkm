@@ -27,7 +27,7 @@ app.use('/admin',admin);
 app.use('/customer',customer);
 app.use('/location',location);
 app.use('/user',user);
-app.use('/user',forget_password);
+app.use('/user/forget',forget_password);
 app.use('/ticket',ticket);
 app.use('/dkm_ticket',dkm_ticket);
 app.use('/total_ft',total_ft);

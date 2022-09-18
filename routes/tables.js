@@ -64,6 +64,7 @@ router.get("/user",(req,res)=>{
         email VARCHAR(255) UNIQUE NOT NULL , 
         password VARCHAR(255) NOT NULL, 
         status VARCHAR(255) NOT NULL DEFAULT 'pending',
+        token TEXT,
         PRIMARY KEY (user_id))`;
   db.query(sql, (err) => {
     if (err) {
@@ -137,6 +138,17 @@ router.get("/dkm_ticket",(req,res)=>{
                 dkm int,
                 ticket int,
                 PRIMARY KEY (id))`
+  db.query(sql, (err) => {
+    if (err) {
+      res.status(400).json({ message: err.message });
+    } else {
+      res.status(201).json({ message: "Table created successfully" });
+    }
+  });
+})
+router.get("/alteruser",(req,res)=>{
+  const sql =  `ALTER TABLE 
+                user ADD token TEXT`
   db.query(sql, (err) => {
     if (err) {
       res.status(400).json({ message: err.message });
