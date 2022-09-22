@@ -12,11 +12,11 @@ import customer_order from './routes/customer_order.js';
 import forget_password from './routes/forget_password.js';
 import dkm_ticket from './routes/dkm_ticket.js';
 import bodyParser from 'body-parser';
-
+import cors from 'cors';
 //Here is the app to create server and api
 const app = express();
 const PORT = process.env.PORT || 3000;
-
+app.use(cors());
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.json());
 app.use((req, res, next) => {

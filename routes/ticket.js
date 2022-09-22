@@ -1,8 +1,7 @@
 import { Router } from "express";
 import db from "../libs/db.js";
 import multer from "multer";
-import { S3Client, GetObjectCommand } from "@aws-sdk/client-s3";
-import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import { S3Client } from "@aws-sdk/client-s3";
 import multerS3 from "multer-s3";
 const router = Router();
 
@@ -50,15 +49,13 @@ router.get("/", (req, res) => {
                   email:item.email,
                   status:item.status
                 },
-                shipped_to:item.shipped_to,
                 customer:{
                   id:item.customer_id,
                   name:item.customer_name,
                   address:item.customer_address
                 },
-                address:item.address,
                 dkm_number:item.dkm_number,
-                data:item.date,
+                date:item.date,
                 location:{
                   id:item.location_id,
                   name:item.location_name
@@ -120,13 +117,11 @@ router.get(`/user/:id`, (req, res) => {
                   email:item.email,
                   status:item.status
                 },
-                shipped_to:item.shipped_to,
                 customer:{
                   id:item.customer_id,
                   name:item.customer_name,
                   address:item.customer_address
                 },
-                address:item.address,
                 dkm_number:item.dkm_number,
                 data:item.date,
                 location:{
@@ -191,9 +186,7 @@ router.post(
       const driver_signature = req.files.driver_signature[0].key;
       const ticketObj = {
         user:req.body.user,
-        shipped_to: req.body.shipped_to,
         customer:req.body.customer,
-        address:req.body.address,
         dkm_number:req.body.dkm_number,
         date: req.body.date.toString(),
         location: req.body.location,
