@@ -143,7 +143,7 @@ router.post("/login", (req, res) => {
                     res.status(401).json({ message: "Rejected" });
                   }
                 } else {
-                  jwt.sign(JSON.stringify(result[0]), secret,{ maxAge: 1}, (err, token) => {
+                  jwt.sign(JSON.stringify(result[0]), secret, (err, token) => {
                     if (err) {
                       res.status(500).json({ message: err.message });
                     } else {
