@@ -21,24 +21,29 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.json());
 app.use((req, res, next) => {
   next()
-})
-app.use('/table',tables);
-app.use('/admin',admin);
-app.use('/customer',customer);
-app.use('/location',location);
-app.use('/user',user);
-app.use('/user/forget',forget_password);
-app.use('/ticket',ticket);
-app.use('/dkm_ticket',dkm_ticket);
-app.use('/total_ft',total_ft);
-app.use('/customer_order',customer_order);
+});
+app.use(express.static("web"));
+app.use('/api/table',tables);
+app.use('/api/admin',admin);
+app.use('/api/customer',customer);
+app.use('/api/location',location);
+app.use('/api/user',user);
+app.use('/api/user/forget',forget_password);
+app.use('/api/ticket',ticket);
+app.use('/api/dkm_ticket',dkm_ticket);
+app.use('/api/total_ft',total_ft);
+app.use('/api/customer_order',customer_order);
+
+app.get("/api/",(req,res)=>{
+  res.send("<h2>Api is working perfectly</h2>");
+});
 
 app.get('/', (req, res) => {
-  res.send('Hello World!')
+  res.render('index.html');
 });
 app.get("*",(req,res)=>{
   res.status(404).send("Not found");
 })
 app.listen(PORT, () => {
-  console.log(`DKM app listening on port ${PORT}`);
+  console.log(`DKM server listening on port ${PORT}`);
 });

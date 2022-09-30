@@ -14,7 +14,15 @@ router.get("/", (req, res) => {
     if (err) {
       res.status(400).json({ message: err.message });
     } else {
-      res.json(result);
+      const data = result.map(item=>{
+        return {
+          user_id: item.user_id,
+          name: item.name,
+          email: item.email,
+          status: item.status
+        };
+      })
+      res.json(data);
     }
   });
 });
@@ -30,15 +38,22 @@ router.get("/ticket", (req, res) => {
         if (err) {
           res.status(400).json({ message: err.message });
         } else {
-          userResult.map((item) => {
-            item["ticket"] = 0;
+          const data = userResult.map((item) => {
+            const obj = {
+              user_id: item.user_id,
+              name: item.name,
+              email: item.email,
+              status: item.status
+            }; 
+            obj["ticket"] = 0;
             ticketResult.map((ticketItem) => {
-              if (ticketItem.user === item.user_id) {
-                item["ticket"] += 1;
+              if (ticketItem.user === obj.user_id) {
+                obj["ticket"] += 1;
               }
             });
+            return obj;
           });
-          res.json(userResult);
+          res.json(data);
         }
       });
     }

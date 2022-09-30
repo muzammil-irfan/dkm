@@ -75,30 +75,12 @@ router.get("/user",(req,res)=>{
   });
 });
 
-router.get("/pcs",(req,res)=>{
-  const sql = `CREATE TABLE 
-        pcs(pcs_id int AUTO_INCREMENT, 
-        pcs_ft int, 
-        pcs_in int,
-        pcs_notes VARCHAR(255),
-        PRIMARY KEY (pcs_id))`;
-  db.query(sql, (err) => {
-    if (err) {
-      res.status(400).json({ message: err.message });
-      return;
-    }
-    res.status(201).json({ message: "Table created successfully" });
-  });
-  
-})
 
 router.get("/ticket",(req,res)=>{
   const sql = `CREATE TABLE 
         ticket(ticket_id int AUTO_INCREMENT, 
           user VARCHAR(255) NOT NULL,
-          shipped_to VARCHAR(255) NOT NULL, 
           customer int NOT NULL,
-          address VARCHAR(255) NOT NULL,
           dkm_number int NOT NULL, 
           date VARCHAR(255) NOT NULL, 
           location int NOT NULL,
@@ -111,18 +93,18 @@ router.get("/ticket",(req,res)=>{
           conditions VARCHAR(255) NOT NULL,
           ticket_number int NOT NULL,
           total_ft int NOT NULL,
-          pcs int NOT NULL,
+          pcs LONGTEXT NOT NULL,
           truck_number VARCHAR(255) NOT NULL,
           truck_company VARCHAR(255) NOT NULL,
           trailer_number VARCHAR(255) NOT NULL,
           driver_signature VARCHAR(255) NOT NULL,
           truck_image VARCHAR(255),
           trailer_image VARCHAR(255) NOT NULL,
+          upload_pdf VARCHAR(255) NOT NULL,
           PRIMARY KEY (ticket_id),
           FOREIGN KEY (user) REFERENCES user(user_id),
           FOREIGN KEY (customer) REFERENCES customer(customer_id),
-          FOREIGN KEY (location) REFERENCES location(location_id),
-          FOREIGN KEY (pcs) REFERENCES pcs(pcs_id))`;
+          FOREIGN KEY (location) REFERENCES location(location_id))`;
   db.query(sql, (err) => {
     if (err) {
       res.status(400).json({ message: err.message });
@@ -146,9 +128,9 @@ router.get("/dkm_ticket",(req,res)=>{
     }
   });
 })
+
 router.get("/alterticket",(req,res)=>{
-  const sql =  `ALTER TABLE 
-                ticket DROP COLUMN shipped_to, DROP COLUMN address`
+  const sql =  `DROP TABLE ticket`;
   db.query(sql, (err) => {
     if (err) {
       res.status(400).json({ message: err.message });
@@ -157,4 +139,5 @@ router.get("/alterticket",(req,res)=>{
     }
   });
 })
+
 export default router;
