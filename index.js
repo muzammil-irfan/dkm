@@ -12,17 +12,23 @@ import customer_order from './routes/customer_order.js';
 import forget_password from './routes/forget_password.js';
 import dkm_ticket from './routes/dkm_ticket.js';
 import bodyParser from 'body-parser';
+import path from 'path';
+import ejs from 'ejs';
 import cors from 'cors';
 //Here is the app to create server and api
 const app = express();
 const PORT = process.env.PORT || 3000;
+const __dirname = path.resolve();
 app.use(cors());
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.json());
 app.use((req, res, next) => {
   next()
 });
-app.use(express.static("web"));
+app.engine('html',ejs.renderFile);
+app.use(express.static(path.join(__dirname, "web")));
+app.set("views",path.join(__dirname, "web"));
+console.log(__dirname);
 app.use('/api/table',tables);
 app.use('/api/admin',admin);
 app.use('/api/customer',customer);
@@ -38,7 +44,7 @@ app.get("/api/",(req,res)=>{
   res.send("<h2>Api is working perfectly</h2>");
 });
 
-app.get('/', (req, res) => {
+app.get('/*', (req, res) => {
   res.render('index.html');
 });
 app.get("*",(req,res)=>{
