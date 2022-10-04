@@ -26,9 +26,8 @@ app.use((req, res, next) => {
   next()
 });
 app.engine('html',ejs.renderFile);
-app.use(express.static(path.join(__dirname, "web")));
-app.set("views",path.join(__dirname, "web"));
-console.log(__dirname);
+app.use(express.static(path.join(__dirname, "web").replace(/\\/g, '/')));
+app.set("views",path.join(__dirname, "web").replace(/\\/g, '/'));
 app.use('/api/table',tables);
 app.use('/api/admin',admin);
 app.use('/api/customer',customer);
@@ -40,7 +39,7 @@ app.use('/api/dkm_ticket',dkm_ticket);
 app.use('/api/total_ft',total_ft);
 app.use('/api/customer_order',customer_order);
 
-app.get("/api/",(req,res)=>{
+app.get("/api/",(req,res)=>{  
   res.send("<h2>Api is working perfectly</h2>");
 });
 
