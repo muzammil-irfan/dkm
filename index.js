@@ -15,10 +15,11 @@ import bodyParser from 'body-parser';
 import path from 'path';
 import ejs from 'ejs';
 import cors from 'cors';
+import { url } from 'inspector';
 //Here is the app to create server and api
 const app = express();
 const PORT = process.env.PORT || 3000;
-const __dirname = path.resolve();
+const webPath = new URL("web",import.meta.url).pathname.slice(1);
 app.use(cors());
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.json());
@@ -26,8 +27,8 @@ app.use((req, res, next) => {
   next()
 });
 app.engine('html',ejs.renderFile);
-app.use(express.static(path.join(__dirname, "web").replace(/\\/g, '/')));
-app.set("views",path.join(__dirname, "web").replace(/\\/g, '/'));
+app.use(express.static(webPath));
+app.set("views",webPath);
 app.use('/api/table',tables);
 app.use('/api/admin',admin);
 app.use('/api/customer',customer);
@@ -38,7 +39,7 @@ app.use('/api/ticket',ticket);
 app.use('/api/dkm_ticket',dkm_ticket);
 app.use('/api/total_ft',total_ft);
 app.use('/api/customer_order',customer_order);
-
+console.log(new URL("web",import.meta.url).pathname.slice(1));
 app.get("/api/",(req,res)=>{  
   res.send("<h2>Api is working perfectly</h2>");
 });
