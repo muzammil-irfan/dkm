@@ -21,7 +21,7 @@ router.post("/", (req, res) => {
         } else {
           if (result.length === 0) {
             res.status(404).json({ message: "Email not found" });
-          } else {
+          } else {//If email found then create code and send the token to the database and email the code to the user email
             const code = randomstring.generate({
               length: 6,
               charset: "numeric",
