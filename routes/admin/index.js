@@ -1,7 +1,9 @@
 import { Router } from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import db from "../libs/db.js";
+import db from "../../libs/db.js";
+import randomstring from "randomstring";
+import nodemailer from "nodemailer";
 const secret = process.env.JWT_SECRET;
 // const secret = "nodejs";
 const router = Router();
@@ -74,66 +76,6 @@ router.post("/signup", async (req, res) => {
   }
 });
 
-router.post("/login", (req, res) => {
-  try {
-    if (
-      req.body.email === undefined ||
-      req.body.password === undefined ||
-      req.body.pin === undefined
-    ) {
-      res.status(404).json({ message: "credentials not found" });
-    } else {
-      if (
-        req.body.password.length < 6 ||
-        typeof req.body.pin !== "number" ||
-        req.body.pin.toString().length < 4
-      ) {
-        if (typeof req.body.pin !== "number") {
-          res.status(400).json({ message: "Pin can only be a number" });
-        } else if (req.body.pin.toString().length < 4) {
-          res.status(400).json({ message: "Pin cannot be less than 4" });
-        } else {
-          res.status(400).json({ message: "Password cannot be less than 6" });
-        }
-      } else {
-        let sql = `SELECT * FROM admin WHERE email = '${req.body.email}'`;
-        db.query(sql, async (err, result) => {
-          if (err) {
-            res.status(401).json({ message: "Wrong credentials" });
-          } else {
-            if (result.length > 0) {
-              if (req.body.pin !== result[0].pin) {
-                res.status(401).json({ message: "Wrong credentials" });
-              } else {
-                const match = await bcrypt.compare(
-                  req.body.password.toString(),
-                  result[0].password
-                );
-                if (match) {
-                  jwt.sign(JSON.stringify(result[0]), secret, (err, token) => {
-                    if (err) {
-                      res.status(500).json({ message: err.message });
-                    } else {
-                      res
-                        .status(202)
-                        .json({ token, message: "Login successfully" });
-                    }
-                  });
-                } else {
-                  res.status(401).json({ message: "Wrong credentials" });
-                }
-              }
-            } else {
-              res.status(404).json({ message: "email not found" });
-            }
-          }
-        });
-      }
-    }
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-});
 
 router.post("/updatepassword", (req, res) => {
   try {

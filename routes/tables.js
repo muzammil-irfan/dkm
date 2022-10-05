@@ -129,8 +129,8 @@ router.get("/dkm_ticket",(req,res)=>{
   });
 })
 
-router.get("/alterticket",(req,res)=>{
-  const sql =  `DROP TABLE ticket`;
+router.get("/alteradmin",(req,res)=>{
+  const sql =  `ALTER TABLE admin ADD COLUMN token TEXT`;
   db.query(sql, (err) => {
     if (err) {
       res.status(400).json({ message: err.message });

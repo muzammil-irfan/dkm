@@ -1,6 +1,6 @@
 import { Router } from "express";
 import bcrypt from "bcrypt";
-import db from "../libs/db.js";
+import db from "../../libs/db.js";
 const secret = process.env.JWT_SECRET;
 import randomstring from "randomstring"
 // const secret = "nodejs";
