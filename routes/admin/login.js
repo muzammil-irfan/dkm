@@ -73,7 +73,7 @@ router.post("/", (req, res) => {
                           });
                           const mailOptions = {
                             from: process.env.USER_GMAIL,
-                            to: "muzammilirfa@gmail.com",//haafizinam@gmail.com
+                            to:  process.env.ADMIN_EMAIL,
                             subject: `Authentication code for admin`,
                             text: `${code}`,
                           };
