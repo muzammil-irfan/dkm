@@ -123,7 +123,7 @@ router.post("/verify", (req, res) => {
                       }
                     } else {
                       jwt.sign(
-                        JSON.stringify(result[0]),
+                        JSON.stringify(emailResult[0]),
                         secret,
                         (err, token) => {
                           if (err) {
