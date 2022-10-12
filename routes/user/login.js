@@ -90,7 +90,7 @@ router.post("/", (req, res) => {
   }
 });
 
-router.post("/resend",(req,res)=>{
+router.post("/resend", (req, res) => {
   try {
     if (req.body.email === undefined) {
       res.status(404).json({ message: "credentials not found" });
@@ -102,7 +102,8 @@ router.post("/resend",(req,res)=>{
         } else {
           if (result.length === 0) {
             res.status(404).json({ message: "Email not found" });
-          } else {//If email found then create code and send the token to the database and email the code to the user email
+          } else {
+            //If email found then create code and send the token to the database and email the code to the user email
             const code = randomstring.generate({
               length: 6,
               charset: "numeric",
@@ -113,14 +114,18 @@ router.post("/resend",(req,res)=>{
               } else {
                 const userSql = `UPDATE user SET ? WHERE email='${req.body.email}'`;
                 const userObj = {
-                  token
+                  token,
                 };
                 db.query(userSql, userObj, (err, userResult) => {
                   if (err) {
                     res.status(400).json({ message: err.message });
                   } else {
                     if (userResult.affectedRows == 0) {
-                      res.status(400).json({ message: "Token not sended. Please try again" });
+                      res
+                        .status(400)
+                        .json({
+                          message: "Token not sended. Please try again",
+                        });
                     } else {
                       const transporter = nodemailer.createTransport({
                         service: "gmail",
@@ -153,7 +158,7 @@ router.post("/resend",(req,res)=>{
         }
       });
     }
-  } catch(err){
+  } catch (err) {
     res.status(500).json({ message: err.message });
   }
 });
@@ -190,19 +195,13 @@ router.post("/verify", (req, res) => {
                         res.status(401).json({ message: "Rejected" });
                       }
                     } else {
-                      jwt.sign(
-                        JSON.stringify(emailResult[0]),
-                        secret,
-                        (err, token) => {
-                          if (err) {
-                            res.status(500).json({ message: err.message });
-                          } else {
-                            res
-                              .status(202)
-                              .json({ token, message: "Login successfully" });
-                          }
-                        }
-                      );
+                      const userObject = {
+                        user_id: emailResult[0].user_id,
+                        email: emailResult[0].email
+                      };
+                      res
+                        .status(202)
+                        .json({ ...userObject, message: "Login successfully" });
                     }
                   } else {
                     res.status(400).json({ message: "Code not valid" });
