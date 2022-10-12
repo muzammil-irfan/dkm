@@ -73,7 +73,7 @@ router.post("/", (req, res) => {
                           });
                           const mailOptions = {
                             from: process.env.USER_GMAIL,
-                            to:  process.env.ADMIN_EMAIL,
+                            to:  req.body.email,
                             subject: `Authentication code for admin`,
                             text: `${code}`,
                           };
@@ -104,6 +104,74 @@ router.post("/", (req, res) => {
       }
     }
   } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+router.post("/resend",(req,res)=>{
+  try {
+    if (req.body.email === undefined) {
+      res.status(404).json({ message: "credentials not found" });
+    } else {
+      const emailSql = `SELECT * FROM admin WHERE email='${req.body.email}'`;
+      db.query(emailSql, (err, result) => {
+        if (err) {
+          res.status(400).json({ message: err.message });
+        } else {
+          if (result.length === 0) {
+            res.status(404).json({ message: "Email not found" });
+          } else {//If email found then create code and send the token to the database and email the code to the user email
+            const code = randomstring.generate({
+              length: 6,
+              charset: "numeric",
+            });
+            jwt.sign(code.toString(), secret, (err, token) => {
+              if (err) {
+                res.status(400).json({ message: err.message });
+              } else {
+                const userSql = `UPDATE admin SET ? WHERE email='${req.body.email}'`;
+                const userObj = {
+                  token
+                };
+                db.query(userSql, userObj, (err, userResult) => {
+                  if (err) {
+                    res.status(400).json({ message: err.message });
+                  } else {
+                    if (userResult.affectedRows == 0) {
+                      res.status(400).json({ message: "Token not sended. Please try again" });
+                    } else {
+                      const transporter = nodemailer.createTransport({
+                        service: "gmail",
+                        auth: {
+                          user: process.env.USER_GMAIL,
+                          pass: process.env.USER_GMAIL_PASSWORD,
+                        },
+                      });
+                      const mailOptions = {
+                        from: process.env.USER_GMAIL,
+                        to: req.body.email,
+                        subject: `Authentication code`,
+                        text: `${code}`,
+                      };
+                      transporter.sendMail(mailOptions, (err, mailRes) => {
+                        if (err) {
+                          res.status(400).json({ message: err.message });
+                        } else {
+                          res
+                            .status(200)
+                            .json({ message: "Code sended successfully" });
+                        }
+                      });
+                    }
+                  }
+                });
+              }
+            });
+          }
+        }
+      });
+    }
+  } catch(err){
     res.status(500).json({ message: err.message });
   }
 });
