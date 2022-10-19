@@ -47,13 +47,16 @@ console.log(new URL("web",import.meta.url).pathname.slice(1));
 app.get("/api/",(req,res)=>{  
   res.send("<h2>Api is working perfectly</h2>");
 });
+app.get("/api/*",(req,res)=>{
+  res.status(404).send("Not found");
+})
 
 app.get('/*', (req, res) => {
   res.render('index.html');
 });
 app.get("*",(req,res)=>{
   res.status(404).send("Not found");
-})
+});
 app.listen(PORT, () => {
   console.log(`DKM server listening on port ${PORT}`);
 });

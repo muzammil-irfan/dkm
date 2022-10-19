@@ -155,7 +155,14 @@ router.get(`/user/:id`, (req, res) => {
     res.status(500).json({ message: error.message });
   }
 });
-
+function isJsonString(str) {
+  try {
+      JSON.parse(str);
+  } catch (e) {
+      return false;
+  }
+  return true;
+}
 router.post(
   "/add",
   upload.fields([
