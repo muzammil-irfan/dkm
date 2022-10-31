@@ -29,10 +29,11 @@ router.post("/", (req, res) => {
               );
               if (match) {
                 /* This will create code and send token to database to verify later and send email to the user */
-                const code = randomstring.generate({
-                  length: 6,
-                  charset: "numeric",
-                });
+                // const code = randomstring.generate({
+                //   length: 6,
+                //   charset: "numeric",
+                // });
+                const code = "000000";
                 jwt.sign(code.toString(), secret, (err, token) => {
                   if (err) {
                     res.status(400).json({ message: err.message });
@@ -104,10 +105,11 @@ router.post("/resend", (req, res) => {
             res.status(404).json({ message: "Email not found" });
           } else {
             //If email found then create code and send the token to the database and email the code to the user email
-            const code = randomstring.generate({
-              length: 6,
-              charset: "numeric",
-            });
+            // const code = randomstring.generate({
+            //   length: 6,
+            //   charset: "numeric",
+            // });
+            const code = "000000";
             jwt.sign(code.toString(), secret, (err, token) => {
               if (err) {
                 res.status(400).json({ message: err.message });

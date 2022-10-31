@@ -22,12 +22,19 @@ import { url } from 'inspector';
 const app = express();
 const PORT = process.env.PORT || 3000;
 const webPath = new URL("web",import.meta.url).pathname.slice(1);
-app.use(cors());
+const allowlist = ['https://usedkmpipe.app', 'https://www.usedkmpipe.app']
+const corsOptionsDelegate = function (req, callback) {
+  let corsOptions;
+  if (allowlist.indexOf(req.header('Origin')) !== -1) {
+    corsOptions = { origin: true } // reflect (enable) the requested origin in the CORS response
+  } else {
+    corsOptions = { origin: false } // disable CORS for this request
+  }
+  callback(null, corsOptions) // callback expects two parameters: error and options
+}
+app.use(cors(corsOptionsDelegate));
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.json());
-app.use((req, res, next) => {
-  next()
-});
 app.engine('html',ejs.renderFile);
 app.use(express.static(webPath));
 app.set("views",webPath);
